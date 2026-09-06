@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User profile document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Isolated user journal reflections & entries
+    match /users/{userId}/entries/{entryId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Isolated interactions & chat turns
+    match /users/{userId}/interactions/{interactionId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Deny all other unmatched paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
